@@ -10,7 +10,7 @@ include_once "header.php";
                 <h1>Ajouter une annonce</h1>
             </div>
         </div>
-        <form action="<?php echo $_SERVER["PHP_SELF"] ?>" method="post" name="form">
+        <form action="<?php echo $_SERVER["PHP_SELF"] ?>" method="POST" name="form">
 
             <div class="mb-3">
                 <input type="text" class="form-control" placeholder="Titre de l'annonce" name="titre">
@@ -40,13 +40,14 @@ include_once "header.php";
                 <input type="number" class="form-control" name="prix" placeholder="Prix de l'annonce">
             </div>
 
-            <input type="submit" class="btn btn-success" value="Ajouter" name="ajouter"/>
+            <input type="submit" class="btn btn-success" value="Ajouter" name="ajouter" />
         </form>
     </div>
 </div>
 <?php
 //Traitement du formulaire
-if (isset($_POST['ajouter']) && isset($_POST['titre']) && isset($_POST['description']) && isset($_POST['ville']) && isset($_POST['codePotal']) && isset($_POST['prix'])) {
+if (isset($_POST['ajouter'])) {
+    if (isset($_POST['titre']) && isset($_POST['description']) && isset($_POST['ville']) && isset($_POST['codePostal']) && isset($_POST['type']) && isset($_POST['prix'])) {
 
         $titre = $_POST['titre'];
         $description = $_POST['description'];
@@ -73,7 +74,10 @@ if (isset($_POST['ajouter']) && isset($_POST['titre']) && isset($_POST['descript
             echo "Erreur d'insertion : " . $erreur[0] . " - Code : " . $bdd->errorCode();
         }
         $bdd = null;
-} 
+    } else {
+        echo "Veuillez remplir tous les champs";
+    }
+}
 
 //footer
 include_once "footer.html";
