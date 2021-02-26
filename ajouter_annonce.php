@@ -10,7 +10,7 @@ include_once "header.php";
                 <h1>Ajouter une annonce</h1>
             </div>
         </div>
-        <form action="form_register.php" method="post" name="form" enctype="multipart/form-data">
+        <form action="<?php echo $_SERVER["PHP_SELF"] ?>" method="post" name="form">
 
             <div class="mb-3">
                 <input type="text" class="form-control" placeholder="Titre de l'annonce" name="titre">
@@ -32,15 +32,50 @@ include_once "header.php";
                 <label for="type">Type d'annonce</label>
                 <select class="form-control" name="type">
                     <option value="location">Location</option>
-                    <option value="vente">Vente</option>   
+                    <option value="vente">Vente</option>
                 </select>
             </div>
 
-            <button type="submit" class="btn btn-success" id="bouton" name="ajouter">Ajouter</button>
+            <div class="mb-3">
+                <input type="number" class="form-control" name="prix" placeholder="Prix de l'annonce">
+            </div>
+
+            <input type="submit" class="btn btn-success" value="Ajouter" name="ajouter"/>
         </form>
     </div>
 </div>
 <?php
+//Traitement du formulaire
+if (isset($_POST['ajouter']) && isset($_POST['titre']) && isset($_POST['description']) && isset($_POST['ville']) && isset($_POST['codePotal']) && isset($_POST['prix'])) {
+
+        $titre = $_POST['titre'];
+        $description = $_POST['description'];
+        $ville = $_POST['ville'];
+        $code_postal = $_POST['codePostal'];
+        $type = $_POST['type'];
+        $prix = $_POST['prix'];
+
+        include "connexion_bdd.php";
+        $requete = "INSERT INTO advert (title, description_annonce, postal_code, city, type_annonce, price, reservation_message) VALUES (:titre, :description_annonce, :code_postal, :ville, :type_annonce, :prix, null)";
+
+        $requete_preparee = $bdd->prepare($requete);
+        $requete_preparee->bindValue(":titre", $titre, PDO::PARAM_STR);
+        $requete_preparee->bindValue(":description_annonce", $description, PDO::PARAM_STR);
+        $requete_preparee->bindValue(":code_postal", $code_postal, PDO::PARAM_STR);
+        $requete_preparee->bindValue(":ville", $ville, PDO::PARAM_STR);
+        $requete_preparee->bindValue(":type_annonce", $type, PDO::PARAM_STR);
+        $requete_preparee->bindValue(":prix", $prix, PDO::PARAM_INT);
+
+        if ($requete_preparee->execute()) {
+            echo "<div class='row mt-3 justify-content-center'><div class='col'><p>Annonce ajoutée !</p></div></div>";
+        } else {
+            $erreur = $bdd->errorInfo();
+            echo "Erreur d'insertion : " . $erreur[0] . " - Code : " . $bdd->errorCode();
+        }
+        $bdd = null;
+} 
+
+//footer
 include_once "footer.html";
 
 ?>
